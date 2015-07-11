@@ -1,9 +1,13 @@
 /*jshint expr: true */
 import _ from "underscore";
+import { makeEmitter } from "pubit-as-promised";
 import StoreitValue from "../src/StoreitValue";
 
 function StubStore() {
     var data = Object.create(null);
+    var publish = makeEmitter(this, ["modified"]);
+
+    data["2"] = { color: "gray", message: "prepopulated" };
 
     return _.extend(this, {
         options: {
@@ -31,6 +35,8 @@ function StubStore() {
             } else {
                 data[id] = val;
             }
+
+            publish("modified", val, id);
         })
     });
 }
@@ -147,6 +153,46 @@ describe("StoreitValue", function () {
 
             it("should return the new message", () => {
                 this.value.get("message").should.equal("success!");
+            });
+        });
+
+        describe("when a listener is attached", () => {
+            beforeEach(() => {
+                this.changedListener = sinon.stub();
+                this.value.on("changed", this.changedListener);
+            });
+
+            describe("and a single property is set", () => {
+                beforeEach(() => {
+                    this.value.set("color", "orange");
+                });
+
+                it("should call the listener", () => {
+                    this.changedListener.should.have.been.calledWith(sinon.match({ color: "orange" }));
+                });
+            });
+
+            describe("and multiple properties are set", () => {
+                beforeEach(() => {
+                    this.value.set({ color: "black", message: "black is the new orange" });
+                });
+
+                it("should call the listener", () => {
+                    this.changedListener.should.have.been.calledWith(sinon.match({
+                        color: "black",
+                        message: "black is the new orange"
+                    }));
+                });
+            });
+
+            describe("and another value in the store is modified", () => {
+                beforeEach(() => {
+                    this.store.set({ id: "2", message: "another value" });
+                });
+
+                it("should NOT call the listener", () => {
+                    this.changedListener.should.not.have.been.called;
+                });
             });
         });
     });

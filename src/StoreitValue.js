@@ -12,6 +12,8 @@ export default class StoreitValue {
 
         this._key = properties[primaryKey];
         this._store.set(properties);
+
+        this._store.on("modified", this._publishChangedIfValueModified.bind(this));
     }
 
     get key() {
@@ -41,5 +43,11 @@ export default class StoreitValue {
 
     _getFromStore() {
         return this._store.get(this._key);
+    }
+
+    _publishChangedIfValueModified(value, key) {
+        if (key === this._key) {
+            this._publish("changed", value);
+        }
     }
 }
