@@ -20,6 +20,9 @@ var laundryTodo = new StoreitValue(todoStore, {
     isDone: false
 });
 
+// The id is exposed as a getter.
+var id = laundryTodo.id;
+
 // Get a property.
 var isDone = laundryTodo.get("isDone");
 
