@@ -6,6 +6,9 @@ function StubStore() {
     var data = Object.create(null);
 
     return _.extend(this, {
+        options: {
+            primaryKey: "id"
+        },
         has: sinon.spy((id) => {
             return id in data;
         }),
@@ -59,8 +62,12 @@ describe("StoreitValue", function () {
             this.value.should.respondTo("once");
         });
 
-        it("should have an id property", () => {
-            this.value.id.should.equal(1);
+        it("should have expose the store key", () => {
+            this.value.key.should.equal(1);
+        });
+
+        it("should have the key and id be equal", () => {
+            this.value.key.should.equal(this.value.get("id"));
         });
 
         it("should set the store with properties", () => {
@@ -144,7 +151,7 @@ describe("StoreitValue", function () {
         });
     });
 
-    describe("when attempting to create an instance w/o an id", () => {
+    describe("when attempting to create an instance w/o a primary key (id)", () => {
         beforeEach(() => {
             this.createValue = () => {
                 new StoreitValue(this.store, {
@@ -155,7 +162,7 @@ describe("StoreitValue", function () {
         });
 
         it("should throw w/ require id error", () => {
-            this.createValue.should.throw(Error, "StoreitValue creation failed! Missing id in properties.");
+            this.createValue.should.throw(Error, "StoreitValue creation failed! Missing primary key in properties.");
         });
     });
 });

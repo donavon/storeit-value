@@ -4,17 +4,18 @@ export default class StoreitValue {
     constructor(store, properties) {
         this._publish = makeEmitter(this, ["changed"]); // on/off/once mixed in.
         this._store = store;
+        var primaryKey = store.options.primaryKey;
 
-        if (!("id" in properties)) {
-            throw new Error("StoreitValue creation failed! Missing id in properties.");
+        if (!(primaryKey in properties)) {
+            throw new Error("StoreitValue creation failed! Missing primary key in properties.");
         }
 
-        this._id = properties.id;
+        this._key = properties[primaryKey];
         this._store.set(properties);
     }
 
-    get id() {
-        return this._id;
+    get key() {
+        return this._key;
     }
 
     has(prop) {
@@ -35,10 +36,10 @@ export default class StoreitValue {
             var [prop, value] = args;
             update = { [prop]: value };
         }
-        this._store.set(this._id, update);
+        this._store.set(this._key, update);
     }
 
     _getFromStore() {
-        return this._store.get(this.id);
+        return this._store.get(this._key);
     }
 }
