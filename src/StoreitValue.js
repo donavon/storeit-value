@@ -2,7 +2,7 @@ import { makeEmitter } from "pubit-as-promised";
 
 export default class StoreitValue {
     constructor(store, properties) {
-        this._publish = makeEmitter(this, ["change"]); // on/off/once mixed in.
+        this._publish = makeEmitter(this, ["changed"]); // on/off/once mixed in.
         this._store = store;
 
         if (!("id" in properties)) {

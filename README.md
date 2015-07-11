@@ -40,8 +40,8 @@ function listener(changes) {
     console.log(changes); // From the above set would output `{title: "Do the Laundry.", isDone: true }`
 }
 
-laundryTodo.on("change", listener);
-laundryTodo.off("change", listener);
+laundryTodo.on("changed", listener);
+laundryTodo.off("changed", listener);
 ```
 
 In addition, you can extend StoreitValue with custom types!
