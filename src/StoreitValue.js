@@ -1,4 +1,5 @@
 import { makeEmitter } from "pubit-as-promised";
+import makeValueType from "./makeValueType";
 
 export default class StoreitValue {
     constructor(store, properties) {
@@ -39,6 +40,10 @@ export default class StoreitValue {
             update = { [prop]: value };
         }
         this._store.set(this._key, update);
+    }
+
+    static extend(typeOptions) {
+        return makeValueType(StoreitValue, typeOptions);
     }
 
     _getFromStore() {
