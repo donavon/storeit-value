@@ -39,6 +39,10 @@ describe("StoreitValue", function () {
                 this.store.set.should.have.been.calledWith(this.properties);
             });
 
+            it("should listen to the store for modified events", () => {
+                this.store.on.should.have.been.calledWith("modified");
+            });
+
             describe("when getting a property", () => {
                 beforeEach(() => {
                     this.color = this.value.get("color");
@@ -204,6 +208,41 @@ describe("StoreitValue", function () {
 
         it("should throw w/ require id error", () => {
             this.createValue.should.throw(Error, "StoreitValue creation failed! Missing primary key in properties.");
+        });
+    });
+
+    describe("when a data is removed from the store", () => {
+        describe("and it is the value's key", () => {
+            beforeEach(() => {
+                new StoreitValue(this.store, {
+                    id: "3",
+                    color: "brown",
+                    message: "who cares this object won't be valid :("
+                });
+                this.store.remove("3");
+            });
+
+            it("should stop listening to the store for modified events", () => {
+                this.store.off.should.have.been.calledWith("modified");
+            });
+
+            it("should stop listening to the store for removed events", () => {
+                this.store.off.should.have.been.calledWith("removed");
+            });
+        });
+
+        describe("and it is not the value's key", () => {
+            beforeEach(() => {
+                this.store.remove("100");
+            });
+
+            it("should remain listening to the store for modified events", () => {
+                this.store.off.should.not.have.been.calledWith("modified");
+            });
+
+            it("should remain listening to the store for removed events", () => {
+                this.store.off.should.not.have.been.calledWith("removed");
+            });
         });
     });
 });
