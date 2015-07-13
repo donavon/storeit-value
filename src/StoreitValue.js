@@ -14,7 +14,11 @@ export default class StoreitValue {
         this._key = properties[primaryKey];
         this._store.set(properties);
 
-        this._store.on("modified", this._publishChangedIfValueModified.bind(this));
+        this._onModified = this._publishChangedIfValueModified.bind(this);
+        this._onRemoved = this._unsubscribeToStoreIfRemoved.bind(this);
+
+        this._store.on("modified", this._onModified);
+        this._store.on("removed", this._onRemoved);
     }
 
     get key() {
@@ -53,6 +57,13 @@ export default class StoreitValue {
     _publishChangedIfValueModified(value, key) {
         if (key === this._key) {
             this._publish("changed", value);
+        }
+    }
+
+    _unsubscribeToStoreIfRemoved(value, key) {
+        if (key === this._key) {
+            this._store.off("modified", this._onModified);
+            this._store.off("removed", this._onRemoved);
         }
     }
 }

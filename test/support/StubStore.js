@@ -3,7 +3,9 @@ import { makeEmitter } from "pubit-as-promised";
 
 export default function StubStore() {
     var data = Object.create(null);
-    var publish = makeEmitter(this, ["modified"]);
+    var publish = makeEmitter(this, ["modified", "removed"]);
+    sinon.spy(this, "on");
+    sinon.spy(this, "off");
 
     data["100"] = { color: "gray", message: "prepopulated" };
 
@@ -35,6 +37,11 @@ export default function StubStore() {
             }
 
             publish("modified", val, id);
-        })
+        }),
+        remove(id) {
+            var val = data[id];
+            delete data[id];
+            publish("removed", val, id);
+        }
     });
 }
