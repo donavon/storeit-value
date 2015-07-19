@@ -43,6 +43,10 @@ describe("StoreitValue", function () {
                 this.store.on.should.have.been.calledWith("modified");
             });
 
+            it("should listen to the store for removed events", () => {
+                this.store.on.should.have.been.calledWith("removed");
+            });
+
             describe("when getting a property", () => {
                 beforeEach(() => {
                     this.color = this.value.get("color");
