@@ -12,8 +12,13 @@ export default class StoreitValue {
         }
 
         this._key = properties[primaryKey];
-        this._store.set(properties);
 
+        // Populate store with values if provided.
+        if (Object.keys(properties).length > 1) {
+            this._store.set(properties);
+        }
+
+        // Listen for store changes involving this value.
         this._onModified = this._publishChangedIfValueModified.bind(this);
         this._onRemoved = this._unsubscribeToStoreIfRemoved.bind(this);
 

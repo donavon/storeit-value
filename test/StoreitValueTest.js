@@ -215,7 +215,29 @@ describe("StoreitValue", function () {
         });
     });
 
-    describe("when a data is removed from the store", () => {
+    describe("when creating an instance with just the primary key", () => {
+        beforeEach(() => {
+            this.value = new StoreitValue(this.store, { id: "ABC" });
+        });
+
+        it("should expose the key", () => {
+            this.value.key.should.equal("ABC");
+        });
+
+        it("should not set the store", () => {
+            this.store.set.should.not.have.been.called;
+        });
+
+        it("should listen to the store for modified events", () => {
+            this.store.on.should.have.been.calledWith("modified");
+        });
+
+        it("should listen to the store for modified events", () => {
+            this.store.on.should.have.been.calledWith("removed");
+        });
+    });
+
+    describe("when data is removed from the store", () => {
         describe("and it is the value's key", () => {
             beforeEach(() => {
                 new StoreitValue(this.store, {
