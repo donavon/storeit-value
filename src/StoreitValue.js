@@ -36,7 +36,7 @@ export default class StoreitValue {
     }
 
     get(prop) {
-        var value = this._getFromStore()
+        var value = this._getFromStore();
         return value[prop];
     }
 
