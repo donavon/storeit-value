@@ -48,16 +48,28 @@ describe("StoreitValue", function () {
             });
 
             describe("when getting a property", () => {
-                beforeEach(() => {
-                    this.color = this.value.get("color");
+                describe("that exists", () => {
+                    beforeEach(() => {
+                        this.color = this.value.get("color");
+                    });
+
+                    it("should ask the store for the value", () => {
+                        this.store.get.should.have.been.calledWith(this.properties.id);
+                    });
+
+                    it("should return the right color", () => {
+                        this.color.should.equal(this.properties.color);
+                    });
                 });
 
-                it("should ask the store for the value", () => {
-                    this.store.get.should.have.been.calledWith(this.properties.id);
-                });
+                describe("that does not exist", () => {
+                    beforeEach(() => {
+                        this.nothing = this.value.get("nothing");
+                    });
 
-                it("should return the right color", () => {
-                    this.color.should.equal(this.properties.color);
+                    it("should return undefined", () => {
+                        global.expect(this.nothing).to.be.undefined;
+                    });
                 });
             });
 

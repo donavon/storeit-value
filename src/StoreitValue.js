@@ -32,12 +32,12 @@ export default class StoreitValue {
 
     has(prop) {
         var value = this._getFromStore();
-        return prop in value;
+        return value && prop in value;
     }
 
     get(prop) {
         var value = this._getFromStore();
-        return value[prop];
+        return value && value[prop];
     }
 
     set(...args) {
@@ -56,7 +56,7 @@ export default class StoreitValue {
     }
 
     _getFromStore() {
-        return this._store.get(this._key);
+        return this._store.has(this._key) && this._store.get(this._key);
     }
 
     _publishChangedIfValueModified(value, key) {
