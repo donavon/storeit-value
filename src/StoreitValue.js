@@ -37,7 +37,7 @@ export default class StoreitValue {
 
     get(prop) {
         var value = this._getFromStore();
-        return value && value[prop];
+        return value && prop in value ? value[prop] : undefined;
     }
 
     set(...args) {
