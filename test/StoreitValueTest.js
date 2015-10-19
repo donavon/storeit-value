@@ -252,7 +252,7 @@ describe("StoreitValue", function () {
 
         it("should not be stored", () => {
             this.value.isStored.should.be.false;
-        })
+        });
 
         it("should convert to an object w/ just isStored", () => {
             this.value.toObject().should.eql({ id: "ABC" });
