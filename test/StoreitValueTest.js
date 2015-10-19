@@ -19,6 +19,8 @@ describe("StoreitValue", function () {
                 this.value.should.respondTo("has");
                 this.value.should.respondTo("get");
                 this.value.should.respondTo("set");
+                this.value.should.respondTo("toObject");
+                this.value.should.have.property("isStored");
             });
 
             it("should implement the Pubit (observable) interface", () => {
@@ -37,6 +39,14 @@ describe("StoreitValue", function () {
 
             it("should set the store with properties", () => {
                 this.store.set.should.have.been.calledWith(this.properties);
+            });
+
+            it("should report being stored", () => {
+                this.value.isStored.should.be.true;
+            });
+
+            it("should convert to a plain vanilla object", () => {
+                this.value.toObject().should.eql(this.properties);
             });
 
             it("should listen to the store for modified events", () => {
@@ -238,6 +248,14 @@ describe("StoreitValue", function () {
 
         it("should not set the store", () => {
             this.store.set.should.not.have.been.called;
+        });
+
+        it("should not be stored", () => {
+            this.value.isStored.should.be.false;
+        })
+
+        it("should convert to an object w/ just isStored", () => {
+            this.value.toObject().should.eql({ id: "ABC" });
         });
 
         it("should listen to the store for modified events", () => {

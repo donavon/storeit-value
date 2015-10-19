@@ -11,6 +11,7 @@ export default class StoreitValue {
             throw new Error("StoreitValue creation failed! Missing primary key in properties.");
         }
 
+        this._primaryKeyName = primaryKey;
         this._key = properties[primaryKey];
 
         // Populate store with values if provided.
@@ -28,6 +29,10 @@ export default class StoreitValue {
 
     get key() {
         return this._key;
+    }
+
+    get isStored() {
+        return this._store.has(this._key);
     }
 
     has(prop) {
@@ -51,12 +56,16 @@ export default class StoreitValue {
         this._store.set(this._key, update);
     }
 
+    toObject() {
+        return this.isStored ? this._getFromStore() : { [this._primaryKeyName]: this.key };
+    }
+
     static extend(typeOptions) {
         return makeValueType(StoreitValue, typeOptions);
     }
 
     _getFromStore() {
-        return this._store.has(this._key) && this._store.get(this._key);
+        return this.isStored ? this._store.get(this._key) : undefined;
     }
 
     _publishChangedIfValueModified(value, key) {
