@@ -1,9 +1,10 @@
+import _ from "underscore";
 import { makeEmitter } from "pubit-as-promised";
 import makeValueType from "./makeValueType";
 
 export default class StoreitValue {
     constructor(store, properties) {
-        this._publish = makeEmitter(this, ["changed"]); // on/off/once mixed in.
+        this._publish = makeEmitter(this, ["changed", "removed"]); // on/off/once mixed in.
         this._store = store;
         var primaryKey = store.options.primaryKey;
 
@@ -19,10 +20,20 @@ export default class StoreitValue {
             this._store.set(properties);
         }
 
-        // Listen for store changes involving this value.
         this._onModified = this._publishChangedIfValueModified.bind(this);
         this._onRemoved = this._unsubscribeToStoreIfRemoved.bind(this);
+        this.on = _.wrap(this.on, this._ensureListening.bind(this));
+        this.once = _.wrap(this.once, this._ensureListening.bind(this));
+        this._startOnce = _.once(this._start.bind(this));
+    }
 
+    _ensureListening(originalFn, ...args) {
+        this._startOnce();
+        return originalFn(...args);
+    }
+
+    // Listen for store changes involving this value.
+    _start() {
         this._store.on("modified", this._onModified);
         this._store.on("removed", this._onRemoved);
     }
@@ -60,6 +71,11 @@ export default class StoreitValue {
         return this.isStored ? this._getFromStore() : { [this._primaryKeyName]: this.key };
     }
 
+    dispose() {
+        this._store.off("modified", this._onModified);
+        this._store.off("removed", this._onRemoved);
+    }
+
     static extend(typeOptions) {
         return makeValueType(StoreitValue, typeOptions);
     }
@@ -76,8 +92,8 @@ export default class StoreitValue {
 
     _unsubscribeToStoreIfRemoved(value, key) {
         if (key === this._key) {
-            this._store.off("modified", this._onModified);
-            this._store.off("removed", this._onRemoved);
+            this._publish("removed");
+            this.dispose();
         }
     }
 }

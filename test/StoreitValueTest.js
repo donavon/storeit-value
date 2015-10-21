@@ -49,12 +49,12 @@ describe("StoreitValue", function () {
                 this.value.toObject().should.eql(this.properties);
             });
 
-            it("should listen to the store for modified events", () => {
-                this.store.on.should.have.been.calledWith("modified");
+            it("should NOT listen to the store for modified events", () => {
+                this.store.on.should.not.have.been.calledWith("modified");
             });
 
-            it("should listen to the store for removed events", () => {
-                this.store.on.should.have.been.calledWith("removed");
+            it("should NOT listen to the store for removed events", () => {
+                this.store.on.should.not.have.been.calledWith("removed");
             });
 
             describe("when getting a property", () => {
@@ -157,6 +157,14 @@ describe("StoreitValue", function () {
                     this.value.on("changed", this.changedListener);
                 });
 
+                it("should listen to the store for modified events", () => {
+                    this.store.on.should.have.been.calledWith("modified");
+                });
+
+                it("should listen to the store for removed events", () => {
+                    this.store.on.should.have.been.calledWith("removed");
+                });
+
                 describe("and a single property is set", () => {
                     beforeEach(() => {
                         this.value.set("color", "orange");
@@ -188,6 +196,20 @@ describe("StoreitValue", function () {
                     it("should NOT call the listener", () => {
                         this.changedListener.should.not.have.been.called;
                     });
+                });
+            });
+
+            describe("when disposed", () => {
+                beforeEach(() => {
+                    this.value.dispose();
+                });
+
+                it("should stop listening to the store for modified events", () => {
+                    this.store.off.should.have.been.calledWith("modified");
+                });
+
+                it("should stop listening to the store for removed events", () => {
+                    this.store.off.should.have.been.calledWith("removed");
                 });
             });
         });
@@ -257,24 +279,17 @@ describe("StoreitValue", function () {
         it("should convert to an object w/ just isStored", () => {
             this.value.toObject().should.eql({ id: "ABC" });
         });
-
-        it("should listen to the store for modified events", () => {
-            this.store.on.should.have.been.calledWith("modified");
-        });
-
-        it("should listen to the store for modified events", () => {
-            this.store.on.should.have.been.calledWith("removed");
-        });
     });
 
     describe("when data is removed from the store", () => {
         describe("and it is the value's key", () => {
             beforeEach(() => {
-                new StoreitValue(this.store, {
+                var sv = new StoreitValue(this.store, {
                     id: "3",
                     color: "brown",
                     message: "who cares this object won't be valid :("
                 });
+                sv._start(); // Simulate a caller triggering auto listening to stores.
                 this.store.remove("3");
             });
 
