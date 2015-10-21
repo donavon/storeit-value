@@ -1,6 +1,6 @@
 {
   "name": "storeit-value",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Paul Bouzakis <npm@paulbouzakis.com>",
   "description": "Easily read/write to a storeit value.",
   "main": "./lib/StoreitValue.js",
