@@ -68,7 +68,7 @@ export default class StoreitValue {
             var [prop, value] = args;
             update = { [prop]: value };
         }
-        this._store.set(this._key, update);
+        return this._store.set(this._key, update);
     }
 
     toObject() {
