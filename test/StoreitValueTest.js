@@ -15,12 +15,16 @@ describe("StoreitValue", function () {
                 this.properties = properties;
             });
 
+            it("should implement StoreitValue interface", () => {
+                this.value.should.respondTo("toObject");
+                this.value.should.have.property("isStored");
+                this.value.should.have.property("store");
+            });
+
             it("should implement the Storeit interface", () => {
                 this.value.should.respondTo("has");
                 this.value.should.respondTo("get");
                 this.value.should.respondTo("set");
-                this.value.should.respondTo("toObject");
-                this.value.should.have.property("isStored");
             });
 
             it("should implement the Pubit (observable) interface", () => {
@@ -35,6 +39,10 @@ describe("StoreitValue", function () {
 
             it("should have the key and id be equal", () => {
                 this.value.key.should.equal(this.value.get("id"));
+            });
+
+            it("should expose the store", () => {
+                this.value.store.should.equal(this.store);
             });
 
             it("should set the store with properties", () => {

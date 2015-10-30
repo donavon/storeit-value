@@ -42,6 +42,10 @@ export default class StoreitValue {
         return this._key;
     }
 
+    get store() {
+        return this._store;
+    }
+
     get isStored() {
         return this._store.has(this._key);
     }
